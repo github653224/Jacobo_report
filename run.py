@@ -10,6 +10,8 @@ from apscheduler.triggers.cron import CronTrigger
 import os
 import subprocess
 from flask_cors import CORS
+from time import sleep
+
 
 app = Flask(__name__)
 CORS(app)
@@ -174,16 +176,17 @@ def run_task(task_id):
 # 执行任务
 def execute_task(task_id):
     # 模拟执行任务
-    # subprocess.run([
-    #     "java", "-jar", os.getenv("JACOCO_HOME") + "/lib/jacococli.jar", "dump",
-    #     "--address", "127.0.0.1", "--port", "6300", "--destfile", "testcase.exec"
-    # ])
-    # subprocess.run([
-    #     "java", "-jar", os.getenv("JACOCO_HOME") + "/lib/jacococli.jar", "report", "testcase.exec",
-    #     "--html", "./jacoco", "--xml", "jacoco.xml", "--csv", "jacoco.csv",
-    #     "--classfiles", os.getenv("TARGET_HOME") + "/target/classes/",
-    #     "--sourcefiles", os.getenv("TARGET_HOME") + "/src/main/java/"
-    # ])
+    subprocess.run([
+        "java", "-jar", os.getenv("JACOCO_HOME") + "/lib/jacococli.jar", "dump",
+        "--address", "127.0.0.1", "--port", "6300", "--destfile", "./jacoco/testcase.exec"
+    ])
+    sleep(3)
+    subprocess.run([
+        "java", "-jar", os.getenv("JACOCO_HOME") + "/lib/jacococli.jar", "report", "./jacoco/testcase.exec",
+        "--html", "./jacoco", "--xml", "./jacoco/jacoco.xml", "--csv", "./jacoco/jacoco.csv",
+        "--classfiles", os.getenv("TARGET_HOME") + "/target/classes/",
+        "--sourcefiles", os.getenv("TARGET_HOME") + "/src/main/java/"
+    ])
     print("执行任务：", task_id)
 
 # 每天启动时重新加载任务到调度器（可以在应用启动时调用这个函数）
